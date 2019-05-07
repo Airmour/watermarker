@@ -10,6 +10,7 @@ from PIL import Image, ImageFont, ImageDraw, ImageEnhance, ImageChops
 
 TTF_FONT = u'./font/青鸟华光简琥珀.ttf'
 
+
 def add_mark(imagePath, mark, args):
     '''
     添加水印，然后保存图片
@@ -17,8 +18,8 @@ def add_mark(imagePath, mark, args):
     im = Image.open(imagePath)
 
     image = mark(im)
+    name = os.path.basename(imagePath)
     if image:
-        name = os.path.basename(imagePath)
         if not os.path.exists(args.out):
             os.mkdir(args.out)
 
@@ -31,6 +32,7 @@ def add_mark(imagePath, mark, args):
     else:
         print(name + " Failed.")
 
+
 def set_opacity(im, opacity):
     '''
     设置水印透明度
@@ -42,6 +44,7 @@ def set_opacity(im, opacity):
     im.putalpha(alpha)
     return im
 
+
 def crop_image(im):
     '''裁剪图片边缘空白'''
     bg = Image.new(mode='RGBA', size=im.size)
@@ -51,6 +54,7 @@ def crop_image(im):
     if bbox:
         return im.crop(bbox)
     return im
+
 
 def gen_mark(args):
     '''
@@ -65,10 +69,10 @@ def gen_mark(args):
     # 生成文字
     draw_table = ImageDraw.Draw(im=mark)
     draw_table.text(xy=(0, 0),
-        text=args.mark,
-        fill=args.color,
-        font=ImageFont.truetype(TTF_FONT,
-        size=args.size))
+                    text=args.mark,
+                    fill=args.color,
+                    font=ImageFont.truetype(TTF_FONT,
+                                            size=args.size))
     del draw_table
 
     # 裁剪空白
@@ -81,7 +85,7 @@ def gen_mark(args):
         ''' 在im图片上添加水印 im为打开的原图'''
 
         # 计算斜边长度
-        c = int(math.sqrt(im.size[0]*im.size[0] + im.size[1]*im.size[1]))
+        c = int(math.sqrt(im.size[0] * im.size[0] + im.size[1] * im.size[1]))
 
         # 以斜边长度为宽高创建大图（旋转后大图才足以覆盖原图）
         mark2 = Image.new(mode='RGBA', size=(c, c))
@@ -90,7 +94,7 @@ def gen_mark(args):
         y, idx = 0, 0
         while y < c:
             # 制造x坐标错位
-            x = -int((mark.size[0] + args.space)*0.5*idx)
+            x = -int((mark.size[0] + args.space) * 0.5 * idx)
             idx = (idx + 1) % 2
 
             while x < c:
@@ -105,20 +109,22 @@ def gen_mark(args):
         # 在原图上添加大图水印
         if im.mode != 'RGBA':
             im = im.convert('RGBA')
-        im.paste(mark2, # 大图
-            (int((im.size[0]-c)/2), int((im.size[1]-c)/2)), # 坐标
-            mask=mark2.split()[3])
+        im.paste(mark2,  # 大图
+                 (int((im.size[0] - c) / 2), int((im.size[1] - c) / 2)),  # 坐标
+                 mask=mark2.split()[3])
         del mark2
         return im
 
     return mark_im
 
+
 def main():
     parse = argparse.ArgumentParser()
-    parse.add_argument("-f", "--file", type=str, help="image file path or directory")
-    parse.add_argument("-m", "--mark", type=str, help="watermark content")
+    parse.add_argument("-f", "--file", default="./input/test.png", type=str, help="image file path or directory")
+    parse.add_argument("-m", "--mark", default="阿墨官网", type=str, help="watermark content")
     parse.add_argument("-o", "--out", default="./output", help="image output directory, default is ./output")
-    parse.add_argument("-c", "--color", default="#8B8B1B", type=str, help="text color like '#000000', default is #8B8B1B")
+    parse.add_argument("-c", "--color", default="#8B8B1B", type=str,
+                       help="text color like '#000000', default is #8B8B1B")
     parse.add_argument("-s", "--space", default=75, type=int, help="space between watermarks, default is 75")
     parse.add_argument("-a", "--angle", default=30, type=int, help="rotate angle of watermarks, default is 30")
     parse.add_argument("--size", default=50, type=int, help="font size of text, default is 50")
@@ -138,6 +144,7 @@ def main():
             add_mark(image_file, mark, args)
     else:
         add_mark(args.file, mark, args)
+
 
 if __name__ == '__main__':
     main()
