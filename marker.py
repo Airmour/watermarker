@@ -123,7 +123,7 @@ def main():
     parse.add_argument("-f", "--file", default="./input/test.png", type=str, help="image file path or directory")
     parse.add_argument("-m", "--mark", default="阿墨官网", type=str, help="watermark content")
     parse.add_argument("-o", "--out", default="./output", help="image output directory, default is ./output")
-    parse.add_argument("-c", "--color", default="#8B8B1B", type=str,
+    parse.add_argument("-c", "--color", default="#4C8BF4", type=str,
                        help="text color like '#000000', default is #8B8B1B")
     parse.add_argument("-s", "--space", default=75, type=int, help="space between watermarks, default is 75")
     parse.add_argument("-a", "--angle", default=30, type=int, help="rotate angle of watermarks, default is 30")
